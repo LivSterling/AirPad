@@ -116,8 +116,12 @@ export interface IAudioEngine {
   switchKit(kitType: KitType): Promise<void>
   startRecording(): void
   stopRecording(): LoopData | null
-  playLoop(loopId: string): void
+  playLoop(loopId: string, events: RecordedEvent[]): void
   stopLoop(loopId: string): void
+  stopAllLoops(): void
+  setMasterLoopLength(lengthMs: number): void
+  getMasterLoopLength(): number
+  getRecordedEvents(): RecordedEvent[]
   setMasterVolume(volume: number): void
   setBPM(bpm: number): void
   dispose(): void

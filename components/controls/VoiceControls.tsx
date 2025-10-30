@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { VoiceController } from '@/lib/voice/VoiceController'
-import { KitType } from '@/types/audio'
+import { useAppStore } from '@/lib/store'
+import type { KitType } from '@/types'
 
 interface VoiceControlsProps {
   onKitChange: (kit: KitType) => void
@@ -15,6 +16,7 @@ export default function VoiceControls({
 }: VoiceControlsProps) {
   const [isListening, setIsListening] = useState(false)
   const [lastCommand, setLastCommand] = useState<string>('')
+  const store = useAppStore()
 
   useEffect(() => {
     const voiceController = VoiceController.getInstance()
@@ -27,20 +29,25 @@ export default function VoiceControls({
       switch (command) {
         case 'record':
           onRecordingChange(true)
+          store.setRecording(true)
           break
         case 'stop':
           onRecordingChange(false)
+          store.setRecording(false)
           break
         case 'kit:drums':
         case 'kit:drum':
           onKitChange('drums')
+          store.setCurrentKit('drums')
           break
         case 'kit:piano':
           onKitChange('piano')
+          store.setCurrentKit('piano')
           break
         case 'kit:synth':
         case 'kit:funk':
           onKitChange('synth')
+          store.setCurrentKit('synth')
           break
         case 'clear':
           // Handle clear command
@@ -58,7 +65,7 @@ export default function VoiceControls({
       voiceController.onCommand = null
       voiceController.onListeningChange = null
     }
-  }, [onKitChange, onRecordingChange, onInstructionsToggle])
+  }, [onKitChange, onRecordingChange, onInstructionsToggle, store])
 
   const handleManualCommand = (command: string) => {
     const voiceController = VoiceController.getInstance()
