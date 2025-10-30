@@ -52,6 +52,11 @@ export class AudioStoreConnector {
       // Set up audio → store listeners
       this.setupAudioListeners()
 
+      // Load the initial kit
+      const initialKit = useAppStore.getState().currentKit
+      console.log(`Loading initial kit: ${initialKit}`)
+      await this.handleKitChange(initialKit)
+
       this.initialized = true
       console.log('AudioStoreConnector initialized')
     } catch (error) {
@@ -64,37 +69,45 @@ export class AudioStoreConnector {
    * Set up listeners for store changes → update audio engine
    */
   private setupStoreListeners(): void {
-    const store = useAppStore
+    const store = useAppStore.getState
 
     // Listen to current kit changes
-    const unsubscribeKit = store.subscribe(
-      (state) => {
+    let previousState = store()
+    const unsubscribeKit = useAppStore.subscribe((state) => {
+      if (state.currentKit !== previousState.currentKit) {
+        previousState = state
         this.handleKitChange(state.currentKit)
       }
-    )
+    })
     this.unsubscribers.push(unsubscribeKit)
 
     // Listen to master volume changes
-    const unsubscribeVolume = store.subscribe(
-      (state) => {
+    let previousVolume = previousState.masterVolume
+    const unsubscribeVolume = useAppStore.subscribe((state) => {
+      if (state.masterVolume !== previousVolume) {
+        previousVolume = state.masterVolume
         this.audioEngine.setMasterVolume(state.masterVolume)
         EventBus.emit('audio:volumeChanged', { volume: state.masterVolume })
       }
-    )
+    })
     this.unsubscribers.push(unsubscribeVolume)
 
     // Listen to BPM changes
-    const unsubscribeBPM = store.subscribe(
-      (state) => {
+    let previousBPM = previousState.bpm
+    const unsubscribeBPM = useAppStore.subscribe((state) => {
+      if (state.bpm !== previousBPM) {
+        previousBPM = state.bpm
         this.audioEngine.setBPM(state.bpm)
         EventBus.emit('audio:bpmChanged', { bpm: state.bpm })
       }
-    )
+    })
     this.unsubscribers.push(unsubscribeBPM)
 
     // Listen to recording state changes
-    const unsubscribeRecording = store.subscribe(
-      (state) => {
+    let previousRecording = previousState.isRecording
+    const unsubscribeRecording = useAppStore.subscribe((state) => {
+      if (state.isRecording !== previousRecording) {
+        previousRecording = state.isRecording
         if (state.isRecording) {
           this.audioEngine.startRecording()
           EventBus.emit('recording:started')
@@ -103,12 +116,14 @@ export class AudioStoreConnector {
           EventBus.emit('recording:stopped', { loopData })
         }
       }
-    )
+    })
     this.unsubscribers.push(unsubscribeRecording)
 
     // Listen to playing state changes
-    const unsubscribePlaying = store.subscribe(
-      (state) => {
+    let previousPlaying = previousState.isPlaying
+    const unsubscribePlaying = useAppStore.subscribe((state) => {
+      if (state.isPlaying !== previousPlaying) {
+        previousPlaying = state.isPlaying
         if (state.isPlaying) {
           // Start playing active loops
           state.activeLoops.forEach((loopId) => {
@@ -123,7 +138,7 @@ export class AudioStoreConnector {
           EventBus.emit('playback:stopped')
         }
       }
-    )
+    })
     this.unsubscribers.push(unsubscribePlaying)
   }
 

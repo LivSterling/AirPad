@@ -108,7 +108,7 @@ export const getKitConfig = (kitType: KitType) => {
       name: 'Synth',
       // Map to actual synth/electronic files
       samples: [
-        'brazillian-funk-kick_130bpm_C_major.wav',        // Pad 0: Kick
+        'brazilian-funk-kick_130bpm_C_major.wav',        // Pad 0: Kick
         'brazilian-funk-snare.wav',                       // Pad 1: Snare
         'phonk-closed-hi-hats-thin_C_minor.wav',         // Pad 2: Hi-Hat
         'brazilian-funk-kick_121bpm_F_minor.wav',        // Pad 3: Secondary Kick

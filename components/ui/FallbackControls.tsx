@@ -40,81 +40,75 @@ export default function FallbackControls({
   const secondaryButtonClass = `${baseButtonClass} bg-white bg-opacity-10 hover:bg-opacity-20 border-white border-opacity-30`
 
   return (
-    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-30 bg-black bg-opacity-70 backdrop-blur-xl rounded-2xl p-6 border border-white border-opacity-20 shadow-2xl max-w-4xl">
-      {/* Title */}
-      <p className="text-center text-gray-300 text-xs font-semibold mb-4 uppercase tracking-wide">Manual Controls (Fallback)</p>
-      
-      <div className="space-y-3">
-        {/* Recording Controls */}
-        <div className="flex gap-2 justify-center flex-wrap">
-          <button
-            onClick={onRecord}
-            disabled={isRecording}
-            className={`${isRecording ? 'bg-red-600 bg-opacity-80 border-red-500 cursor-default' : primaryButtonClass} ${isRecording ? '!' : ''}`}
-            title="Start recording (Voice: 'record')"
-          >
-            🔴 {isRecording ? 'Recording...' : 'Record'}
-          </button>
-          
-          <button
-            onClick={onStop}
-            disabled={!isRecording}
-            className={`${!isRecording ? 'opacity-50 cursor-not-allowed' : primaryButtonClass}`}
-            title="Stop recording (Voice: 'stop')"
-          >
-            ⏹️ Stop
-          </button>
-          
-          <button
-            onClick={onClear}
-            className={secondaryButtonClass}
-            title="Clear recording (Voice: 'clear')"
-          >
-            🗑️ Clear
-          </button>
-        </div>
-
-        {/* Playback Controls */}
-        <div className="flex gap-2 justify-center flex-wrap">
-          <button
-            onClick={onPlayAll}
-            className={primaryButtonClass}
-            title="Play all saved loops (Voice: 'play all')"
-          >
-            ▶️ Play All
-          </button>
-          
-          <button
-            onClick={onStopAll}
-            className={secondaryButtonClass}
-            title="Stop all playback (Voice: 'stop all')"
-          >
-            ⏸️ Stop All
-          </button>
-        </div>
-
-        {/* Kit Selection */}
-        <div className="flex gap-2 justify-center flex-wrap">
-          {kitOptions.map((kit) => (
+    <div className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black to-black/50 backdrop-blur-xl border-t border-white border-opacity-20 shadow-2xl py-4 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Title */}
+        <p className="text-center text-gray-400 text-xs font-semibold mb-3 uppercase tracking-wide">Controls (Voice: "help" for more)</p>
+        
+        <div className="flex flex-col gap-2">
+          {/* Recording Controls */}
+          <div className="flex gap-2 justify-center flex-wrap">
             <button
-              key={kit}
-              onClick={() => onKitChange(kit)}
-              className={`${
-                currentKit === kit
-                  ? `${primaryButtonClass} ring-2 ring-offset-1 ring-offset-black ring-blue-300`
-                  : secondaryButtonClass
-              }`}
-              title={`Switch to ${kit} kit (Voice: '${kit}')`}
+              onClick={onRecord}
+              disabled={isRecording}
+              className={`${isRecording ? 'bg-red-600 bg-opacity-80 border-red-500 cursor-default' : primaryButtonClass} ${isRecording ? '!' : ''}`}
+              title="Start recording (Voice: 'record')"
             >
-              {getKitEmoji(kit)} {kit.charAt(0).toUpperCase() + kit.slice(1)}
+              🔴 {isRecording ? 'Recording...' : 'Record'}
             </button>
-          ))}
-        </div>
+            
+            <button
+              onClick={onStop}
+              disabled={!isRecording}
+              className={`${!isRecording ? 'opacity-50 cursor-not-allowed' : primaryButtonClass}`}
+              title="Stop recording (Voice: 'stop')"
+            >
+              ⏹️ Stop
+            </button>
+            
+            <button
+              onClick={onClear}
+              className={secondaryButtonClass}
+              title="Clear recording (Voice: 'clear')"
+            >
+              🗑️ Clear
+            </button>
 
-        {/* Info Text */}
-        <p className="text-center text-gray-400 text-xs mt-3">
-          💡 Tip: Use voice commands like "record", "play all", or say kit names for hands-free control
-        </p>
+            <button
+              onClick={onPlayAll}
+              className={primaryButtonClass}
+              title="Play all saved loops (Voice: 'play all')"
+            >
+              ▶️ Play All
+            </button>
+            
+            <button
+              onClick={onStopAll}
+              className={secondaryButtonClass}
+              title="Stop all playback (Voice: 'stop all')"
+            >
+              ⏸️ Stop All
+            </button>
+          </div>
+
+          {/* Kit Selection */}
+          <div className="flex gap-2 justify-center flex-wrap">
+            {kitOptions.map((kit) => (
+              <button
+                key={kit}
+                onClick={() => onKitChange(kit)}
+                className={`${
+                  currentKit === kit
+                    ? `${primaryButtonClass} ring-2 ring-offset-1 ring-offset-black ring-blue-300`
+                    : secondaryButtonClass
+                }`}
+                title={`Switch to ${kit} kit (Voice: '${kit}')`}
+              >
+                {getKitEmoji(kit)} {kit.charAt(0).toUpperCase() + kit.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )

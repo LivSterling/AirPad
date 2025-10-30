@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import PadGrid from '@/components/grid/PadGrid'
 import VoiceControls from '@/components/controls/VoiceControls'
 import InstructionsOverlay from '@/components/ui/InstructionsOverlay'
@@ -28,14 +28,6 @@ export default function Home() {
   const savedLoopCount = savedLoops.length
   const recordingEventCount = currentLoop.length
 
-  // Initialize AudioStoreConnector on client-side only
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      console.log('Setting up AudioStoreConnector...')
-      AudioStoreConnector.getInstance().initialize()
-    }
-  }, [])
-
   const handleStart = async () => {
     setIsInitializing(true)
     setInitError(null)
@@ -44,6 +36,10 @@ export default function Home() {
       // Initialize audio engine (requires user gesture)
       console.log('Initializing AudioEngine...')
       await AudioEngine.getInstance().initialize()
+      
+      // Initialize AudioStoreConnector to sync audio with state
+      console.log('Initializing AudioStoreConnector...')
+      await AudioStoreConnector.getInstance().initialize()
       
       // Initialize hand tracking
       console.log('Initializing HandTracker...')
@@ -188,7 +184,7 @@ export default function Home() {
         </div>
 
         {/* Main Pad Grid - Takes up most of screen */}
-        <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="flex items-center justify-center min-h-screen p-4 pb-48">
           <PadGrid 
             currentKit={currentKit}
             isRecording={isRecording}
