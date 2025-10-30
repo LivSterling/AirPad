@@ -1,6 +1,6 @@
 import * as Tone from 'tone'
 import { IAudioEngine, KitType, PadIndex, RecordedEvent, LoopData } from '../../types/audio'
-import { getSamplePath, generateId, msToSeconds } from '../utils/helpers'
+import { getSamplePath, generateId } from '../utils/helpers'
 
 /**
  * Enhanced AudioEngine implementing singleton pattern with improved architecture
@@ -20,6 +20,8 @@ export class AudioEngine implements IAudioEngine {
   private activeLoops: Map<string, Tone.Loop> = new Map()
   private recordingStartTime = 0
   private isRecording = false
+  private recordedEvents: RecordedEvent[] = []
+  private masterLoopLength = 0  // Master loop length in milliseconds
   
   // Performance optimization
   private loadedKits: Set<KitType> = new Set()
@@ -196,6 +198,8 @@ export class AudioEngine implements IAudioEngine {
 
   public startRecording(): void {
     this.isRecording = true
+    this.recordedEvents = []
+    this.masterLoopLength = 0  // Reset master loop
     this.recordingStartTime = Tone.now()
     console.log('Recording started')
   }
@@ -206,34 +210,43 @@ export class AudioEngine implements IAudioEngine {
     this.isRecording = false
     const duration = (Tone.now() - this.recordingStartTime) * 1000 // Convert to ms
     
-    // Get recorded events from external source (this will be managed by the state store)
-    // For now, return a placeholder
-    const loopData: LoopData = {
-      id: generateId(),
-      events: [], // Will be populated by the store
-      duration,
-      bpm: Tone.Transport.bpm.value,
-      createdAt: new Date()
+    // Set master loop length on first recording
+    if (this.masterLoopLength === 0) {
+      this.masterLoopLength = duration
+      console.log(`Master loop length set to ${duration}ms`)
     }
     
-    console.log(`Recording stopped. Duration: ${duration}ms`)
+    // Create loop data with captured events
+    const loopData: LoopData = {
+      id: generateId(),
+      events: this.recordedEvents,
+      duration: this.masterLoopLength, // Use master loop length, not actual duration
+      bpm: Tone.Transport.bpm.value,
+      createdAt: new Date(),
+      name: `Loop ${this.recordedEvents.length} events`
+    }
+    
+    console.log(`Recording stopped. Loop length: ${this.masterLoopLength}ms, Events: ${this.recordedEvents.length}`)
+    this.recordedEvents = [] // Clear for next recording
     return loopData
   }
 
   private recordEvent(padIndex: PadIndex, kitType: KitType, velocity: number = 1): void {
-    // This will be handled by the state management system
-    // The audio engine just provides the timing
+    if (!this.isRecording) return
+    
+    // Calculate timestamp relative to recording start
     const timestamp = (Tone.now() - this.recordingStartTime) * 1000
     
-    // Emit event to be captured by the app store
-    window.dispatchEvent(new CustomEvent('audioEvent', {
-      detail: {
-        padIndex,
-        timestamp,
-        kitType,
-        velocity
-      }
-    }))
+    // Create and store the event
+    const event: RecordedEvent = {
+      padIndex,
+      timestamp,
+      kitType,
+      velocity
+    }
+    
+    this.recordedEvents.push(event)
+    console.log(`Recorded event: Pad ${padIndex}, T: ${timestamp.toFixed(0)}ms`)
   }
 
   public playLoop(loopId: string, events: RecordedEvent[]): void {
@@ -243,24 +256,33 @@ export class AudioEngine implements IAudioEngine {
     }
 
     try {
+      // Calculate loop duration from events
+      const maxEventTime = Math.max(...events.map(e => e.timestamp), 1000)
+      const loopDuration = this.masterLoopLength || maxEventTime
+      
+      // Create Tone.js loop with modulo timing for subsequent takes
       const loop = new Tone.Loop((time) => {
         events.forEach(event => {
+          // Schedule event with modulo timing so it repeats properly
+          const eventTime = (event.timestamp % loopDuration) / 1000 // Convert to seconds
           Tone.Transport.schedule(() => {
-            this.triggerPad(event.padIndex, event.kitType, event.velocity)
-          }, time + msToSeconds(event.timestamp))
+            this.triggerPad(event.padIndex, event.kitType, event.velocity || 1)
+          }, time + eventTime)
         })
-      }, `${Math.max(...events.map(e => e.timestamp)) / 1000}s`)
+      }, `${loopDuration / 1000}s`)
 
       this.activeLoops.set(loopId, loop)
       loop.start()
 
+      // Ensure transport is running
       if (Tone.Transport.state !== 'started') {
         Tone.Transport.start()
       }
 
-      console.log(`Started playing loop: ${loopId}`)
+      console.log(`Started playing loop: ${loopId} (duration: ${loopDuration.toFixed(0)}ms)`)
     } catch (error) {
       console.error(`Failed to play loop ${loopId}:`, error)
+      throw new Error(`Failed to play loop: ${error}`)
     }
   }
 
@@ -272,22 +294,37 @@ export class AudioEngine implements IAudioEngine {
       this.activeLoops.delete(loopId)
       console.log(`Stopped loop: ${loopId}`)
     }
-
-    // Stop transport if no loops are active
-    if (this.activeLoops.size === 0) {
-      Tone.Transport.stop()
-    }
   }
 
   public stopAllLoops(): void {
-    this.activeLoops.forEach((loop) => {
-      loop.stop()
-      loop.dispose()
+    this.activeLoops.forEach((_loop, loopId) => {
+      this.stopLoop(loopId)
     })
-    this.activeLoops.clear()
-    Tone.Transport.stop()
-    Tone.Transport.cancel()
-    console.log('All loops stopped')
+  }
+
+  /**
+   * Set master loop length (in milliseconds)
+   * Used to synchronize all subsequent recordings/loops
+   */
+  public setMasterLoopLength(lengthMs: number): void {
+    if (lengthMs > 0) {
+      this.masterLoopLength = lengthMs
+      console.log(`Master loop length set to ${lengthMs}ms (${(lengthMs / 1000).toFixed(1)}s)`)
+    }
+  }
+
+  /**
+   * Get current master loop length
+   */
+  public getMasterLoopLength(): number {
+    return this.masterLoopLength
+  }
+
+  /**
+   * Get recorded events from current recording session
+   */
+  public getRecordedEvents(): RecordedEvent[] {
+    return [...this.recordedEvents]
   }
 
   public setMasterVolume(volume: number): void {
@@ -349,3 +386,4 @@ export class AudioEngineError extends Error {
     this.code = code
   }
 }
+
