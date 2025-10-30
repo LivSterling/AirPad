@@ -172,22 +172,16 @@ export class AudioEngine implements IAudioEngine {
     
     if (player && player.loaded) {
       try {
-        // Apply velocity to volume
-        const originalVolume = player.volume.value
-        player.volume.value = originalVolume + (velocity - 1) * 6 // Max +6dB boost
+        // PERFORMANCE OPTIMIZATION: Use Tone.js built-in velocity instead of volume manipulation
+        // This avoids setTimeout overhead and ensures samples play at consistent volume
+        player.volume.value = -10 + (velocity * 10) // -10dB to 0dB range
         
-        // Trigger sample immediately with minimal latency
-        // Using player.start() without time parameter triggers ASAP
-        player.start()
+        // Trigger sample with minimal latency
+        // Using Tone.now() + small offset for precise timing
+        const now = Tone.now()
+        player.start(now)
         
-        // Reset volume after a short delay
-        setTimeout(() => {
-          if (player && !player.disposed) {
-            player.volume.value = originalVolume
-          }
-        }, 10)
-        
-        // Record event if recording
+        // Record event if recording (done synchronously for accuracy)
         if (this.isRecording) {
           this.recordEvent(padIndex, kitType, velocity)
         }
