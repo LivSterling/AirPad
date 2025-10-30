@@ -6,8 +6,8 @@ interface InstructionsOverlayProps {
 
 export default function InstructionsOverlay({ onClose }: InstructionsOverlayProps) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-lg p-8 max-w-2xl mx-4 border border-gray-600">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="bg-black bg-opacity-70 backdrop-blur-xl rounded-2xl p-8 max-w-2xl mx-4 border border-white border-opacity-20 shadow-2xl">
         
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white">AirPad Instructions</h2>
@@ -85,7 +85,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
         <div className="mt-8 text-center">
           <button 
             onClick={onClose}
-            className="voice-button-active"
+            className="px-6 py-3 rounded-lg bg-blue-500 bg-opacity-50 hover:bg-opacity-70 border border-blue-400 border-opacity-50 text-white font-medium transition-all backdrop-blur-sm"
           >
             Got it!
           </button>
