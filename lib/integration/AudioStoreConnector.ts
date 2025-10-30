@@ -12,6 +12,7 @@ import { AudioEngine } from '@/lib/audio/AudioEngine'
 import { useAppStore } from '@/lib/store'
 import { EventBus } from '@/lib/events/EventBus'
 import { ERROR_CODES } from '@/lib/constants'
+import type { PadIndex } from '@/types'
 
 type UnsubscribeCallback = () => void
 
@@ -67,38 +68,34 @@ export class AudioStoreConnector {
 
     // Listen to current kit changes
     const unsubscribeKit = store.subscribe(
-      (state) => state.currentKit,
-      (currentKit) => {
-        this.handleKitChange(currentKit)
+      (state) => {
+        this.handleKitChange(state.currentKit)
       }
     )
     this.unsubscribers.push(unsubscribeKit)
 
     // Listen to master volume changes
     const unsubscribeVolume = store.subscribe(
-      (state) => state.masterVolume,
-      (volume) => {
-        this.audioEngine.setMasterVolume(volume)
-        EventBus.emit('audio:volumeChanged', { volume })
+      (state) => {
+        this.audioEngine.setMasterVolume(state.masterVolume)
+        EventBus.emit('audio:volumeChanged', { volume: state.masterVolume })
       }
     )
     this.unsubscribers.push(unsubscribeVolume)
 
     // Listen to BPM changes
     const unsubscribeBPM = store.subscribe(
-      (state) => state.bpm,
-      (bpm) => {
-        this.audioEngine.setBPM(bpm)
-        EventBus.emit('audio:bpmChanged', { bpm })
+      (state) => {
+        this.audioEngine.setBPM(state.bpm)
+        EventBus.emit('audio:bpmChanged', { bpm: state.bpm })
       }
     )
     this.unsubscribers.push(unsubscribeBPM)
 
     // Listen to recording state changes
     const unsubscribeRecording = store.subscribe(
-      (state) => state.isRecording,
-      (isRecording) => {
-        if (isRecording) {
+      (state) => {
+        if (state.isRecording) {
           this.audioEngine.startRecording()
           EventBus.emit('recording:started')
         } else {
@@ -111,11 +108,9 @@ export class AudioStoreConnector {
 
     // Listen to playing state changes
     const unsubscribePlaying = store.subscribe(
-      (state) => state.isPlaying,
-      (isPlaying) => {
-        if (isPlaying) {
+      (state) => {
+        if (state.isPlaying) {
           // Start playing active loops
-          const state = store.getState()
           state.activeLoops.forEach((loopId) => {
             const loop = state.savedLoops.find((l) => l.id === loopId)
             if (loop) {
@@ -139,14 +134,14 @@ export class AudioStoreConnector {
     const store = useAppStore
 
     // Listen to pad triggers (from hand tracking)
-    EventBus.on('gesture:padTriggered', ({ padIndex, velocity }: { padIndex: number; velocity: number }) => {
+    EventBus.on('gesture:padTriggered', ({ padIndex, velocity }: { padIndex: PadIndex; velocity: number }) => {
       const state = store.getState()
       this.audioEngine.triggerPad(padIndex, state.currentKit, velocity)
 
       // If recording, capture the event
       if (state.isRecording) {
         store.getState().addRecordedEvent({
-          padIndex: padIndex as any,
+          padIndex,
           timestamp: Date.now(),
           kitType: state.currentKit,
           velocity,
@@ -155,7 +150,7 @@ export class AudioStoreConnector {
     })
 
     // Listen to loop stack changes
-    EventBus.on('loops:stateChanged', ({ loops }: { loops: string[] }) => {
+    EventBus.on('loops:stateChanged', () => {
       store.getState().toggleActiveLoop // triggered by user interaction
     })
   }
@@ -181,13 +176,13 @@ export class AudioStoreConnector {
   /**
    * Public API for UI to trigger pads
    */
-  public triggerPad(padIndex: number, velocity: number = 1): void {
+  public triggerPad(padIndex: PadIndex, velocity: number = 1): void {
     const state = useAppStore.getState()
     this.audioEngine.triggerPad(padIndex, state.currentKit, velocity)
 
     if (state.isRecording) {
       state.addRecordedEvent({
-        padIndex: padIndex as any,
+        padIndex,
         timestamp: Date.now(),
         kitType: state.currentKit,
         velocity,

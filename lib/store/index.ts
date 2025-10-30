@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
-import { AppStore, KitType, RecordedEvent, LoopData, PadIndex } from '../../types'
+import { AppStore, KitType, RecordedEvent, LoopData } from '../../types'
 import { generateId } from '../utils/helpers'
 
 interface StoreState extends AppStore {}

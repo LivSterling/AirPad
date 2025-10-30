@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PadGrid from '@/components/grid/PadGrid'
 import VoiceControls from '@/components/controls/VoiceControls'
 import InstructionsOverlay from '@/components/ui/InstructionsOverlay'

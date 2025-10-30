@@ -153,7 +153,7 @@ export const GRID = {
 
 export const KITS = {
   TYPES: ['drums', 'piano', 'synth'] as const,
-  DEFAULT: (process.env.NEXT_PUBLIC_DEFAULT_KIT || 'drums') as KitType,
+  DEFAULT: 'drums' as const,
   
   // Kit metadata
   METADATA: {
@@ -395,4 +395,5 @@ export const APP_VERSION = '0.1.0'
  * Application name
  */
 export const APP_NAME = 'AirPad MVP'
+
 

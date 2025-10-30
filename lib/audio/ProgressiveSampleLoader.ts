@@ -163,7 +163,9 @@ export class ProgressiveSampleLoader {
           {
             onload: () => {
               clearTimeout(loadTimeout)
-              this.sampleCache[kitName][sampleName] = sampler
+              if (this.sampleCache[kitName]) {
+                this.sampleCache[kitName][sampleName] = sampler
+              }
               console.log(`  ✓ Loaded: ${sampleName}`)
               resolve()
             },
@@ -240,7 +242,7 @@ export class ProgressiveSampleLoader {
     let totalSamples = 0
     let totalKits = 0
 
-    Object.entries(this.sampleCache).forEach(([kit, samples]) => {
+    Object.entries(this.sampleCache).forEach(([, samples]) => {
       totalKits++
       totalSamples += Object.keys(samples).length
     })

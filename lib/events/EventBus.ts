@@ -61,7 +61,7 @@ export class EventBus {
       bus.listeners.get(event)?.delete(onceCallback)
     }
     
-    bus.on(event, onceCallback)
+    EventBus.on(event, onceCallback)
   }
 
   /**

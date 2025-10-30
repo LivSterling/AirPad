@@ -20,8 +20,7 @@ import { HandTracker } from '@/lib/tracking/HandTracker'
 import { VoiceController } from '@/lib/voice/VoiceController'
 import { ErrorHandler, createAppError } from '@/lib/errors/ErrorHandler'
 import { AudioStoreConnector } from '@/lib/integration/AudioStoreConnector'
-import { ERROR_CODES, FEATURES } from '@/lib/constants'
-import type { AppError, IInitializable } from '@/types/integration'
+import { FEATURES } from '@/lib/constants'
 
 /**
  * System initialization phases
