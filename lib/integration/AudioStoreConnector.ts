@@ -13,6 +13,7 @@ import { useAppStore } from '@/lib/store'
 import { EventBus } from '@/lib/events/EventBus'
 import { ERROR_CODES } from '@/lib/constants'
 import type { PadIndex } from '@/types'
+import type { KitType } from '@/types'
 
 type UnsubscribeCallback = () => void
 
@@ -43,8 +44,8 @@ export class AudioStoreConnector {
     if (this.initialized) return
 
     try {
-      // Initialize AudioEngine first
-      await this.audioEngine.initialize()
+      // AudioEngine should already be initialized by the caller
+      // We just need to set up listeners and sync state
 
       // Set up store → audio listeners
       this.setupStoreListeners()
@@ -52,10 +53,22 @@ export class AudioStoreConnector {
       // Set up audio → store listeners
       this.setupAudioListeners()
 
-      // Load the initial kit
+      // Pre-load all kits so they're available immediately
+      console.log('Pre-loading all kits...')
+      const kits: KitType[] = ['drums', 'piano', 'synth']
+      for (const kit of kits) {
+        try {
+          console.log(`Loading kit: ${kit}`)
+          await this.audioEngine.switchKit(kit)
+        } catch (error) {
+          console.error(`Failed to pre-load kit ${kit}:`, error)
+        }
+      }
+
+      // Switch back to the initial kit
       const initialKit = useAppStore.getState().currentKit
-      console.log(`Loading initial kit: ${initialKit}`)
-      await this.handleKitChange(initialKit)
+      console.log(`Switching to initial kit: ${initialKit}`)
+      await this.audioEngine.switchKit(initialKit)
 
       this.initialized = true
       console.log('AudioStoreConnector initialized')
