@@ -1,5 +1,6 @@
 import React from 'react'
 import { PadIndex, KitType } from '@/types/audio'
+import { getKitConfig } from '@/lib/utils/helpers'
 
 interface PadProps {
   index: PadIndex
@@ -8,15 +9,9 @@ interface PadProps {
   kitType: KitType
 }
 
-// Pad labels for each kit
-const PAD_LABELS = {
-  drums: ['Kick', 'Snare', 'Open Hat', 'Hi-Hat', 'Crash', 'Ride', 'Tom 1', 'Tom 2', 'Clap'],
-  piano: ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C+', 'Chord'],
-  synth: ['Bass', 'Lead', 'Pad', 'Pluck', 'Stab', 'FX 1', 'FX 2', 'Vocal', 'Drop']
-}
-
 export default function Pad({ index, isActive, isTriggered, kitType }: PadProps) {
-  const label = PAD_LABELS[kitType][index]
+  // Get labels dynamically from kit configuration to ensure consistency
+  const label = getKitConfig(kitType).labels[index]
   
   const getClasses = () => {
     // Base: transparent with visible border
