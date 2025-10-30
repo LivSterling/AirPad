@@ -1,12 +1,15 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import PadGrid from '@/components/grid/PadGrid'
 import VoiceControls from '@/components/controls/VoiceControls'
 import InstructionsOverlay from '@/components/ui/InstructionsOverlay'
+import StatusDisplay from '@/components/ui/StatusDisplay'
+import FallbackControls from '@/components/ui/FallbackControls'
 import { AudioEngine } from '@/lib/audio/AudioEngine'
 import { HandTracker } from '@/lib/tracking/HandTracker'
 import { VoiceController } from '@/lib/voice/VoiceController'
 import { AudioStoreConnector } from '@/lib/integration/AudioStoreConnector'
+import { useAppStore } from '@/lib/store'
 import type { KitType } from '@/types'
 
 export default function Home() {
@@ -16,14 +19,14 @@ export default function Home() {
   const [currentKit, setCurrentKit] = useState<KitType>('drums')
   const [isRecording, setIsRecording] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
-
-  // Initialize AudioStoreConnector on client-side only
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      console.log('Setting up AudioStoreConnector...')
-      AudioStoreConnector.getInstance().initialize()
-    }
-  }, [])
+  
+  // Use Zustand selectors for reactive state
+  const savedLoops = useAppStore((state) => state.savedLoops)
+  const isPlaying = useAppStore((state) => state.isPlaying)
+  const currentLoop = useAppStore((state) => state.currentLoop)
+  
+  const savedLoopCount = savedLoops.length
+  const recordingEventCount = currentLoop.length
 
   const handleStart = async () => {
     setIsInitializing(true)
@@ -33,6 +36,10 @@ export default function Home() {
       // Initialize audio engine (requires user gesture)
       console.log('Initializing AudioEngine...')
       await AudioEngine.getInstance().initialize()
+      
+      // Initialize AudioStoreConnector to sync audio with state
+      console.log('Initializing AudioStoreConnector...')
+      await AudioStoreConnector.getInstance().initialize()
       
       // Initialize hand tracking
       console.log('Initializing HandTracker...')
@@ -152,12 +159,20 @@ export default function Home() {
         {/* Dark overlay to make UI elements visible over camera */}
         <div className="absolute inset-0 bg-black bg-opacity-30 pointer-events-none" style={{ zIndex: -50 }} />
         
+        {/* Status Display - Top Right */}
+        <StatusDisplay 
+          isRecording={isRecording}
+          currentKit={currentKit}
+          savedLoopCount={savedLoopCount}
+          isPlaying={isPlaying}
+          recordingEventCount={recordingEventCount}
+        />
+
         {/* Compact Header */}
         <header className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 text-center">
           <h1 className="text-3xl font-bold text-white drop-shadow-lg mb-1">AirPad</h1>
           <div className="text-sm bg-black bg-opacity-50 text-white px-4 py-1 rounded-full backdrop-blur-sm">
-            <span className="capitalize">{currentKit}</span>
-            {isRecording && <span className="ml-3 text-red-400">● REC</span>}
+            <span className="capitalize">Ready</span>
           </div>
         </header>
 
@@ -169,7 +184,7 @@ export default function Home() {
         </div>
 
         {/* Main Pad Grid - Takes up most of screen */}
-        <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="flex items-center justify-center min-h-screen p-4 pb-48">
           <PadGrid 
             currentKit={currentKit}
             isRecording={isRecording}
@@ -181,6 +196,30 @@ export default function Home() {
           onKitChange={setCurrentKit}
           onRecordingChange={setIsRecording}
           onInstructionsToggle={setShowInstructions}
+        />
+
+        {/* Fallback Manual Controls */}
+        <FallbackControls
+          isRecording={isRecording}
+          onRecord={() => {
+            setIsRecording(true)
+            useAppStore.getState().setRecording(true)
+          }}
+          onStop={() => {
+            setIsRecording(false)
+            useAppStore.getState().setRecording(false)
+          }}
+          onPlayAll={() => {
+            useAppStore.getState().setPlaying(true)
+          }}
+          onStopAll={() => {
+            useAppStore.getState().setPlaying(false)
+          }}
+          onKitChange={setCurrentKit}
+          onClear={() => {
+            useAppStore.getState().clearCurrentLoop()
+          }}
+          currentKit={currentKit}
         />
 
         {/* Instructions Overlay */}

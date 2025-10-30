@@ -141,14 +141,17 @@ export class AudioEngine implements IAudioEngine {
         const loadPromise = new Promise<void>((resolve, reject) => {
           let isResolved = false
           
-          // Set timeout
+          // Set timeout (15 seconds for initial kit loading)
           const timeoutId = setTimeout(() => {
             if (!isResolved) {
               isResolved = true
+              clearInterval(pollInterval)
               console.warn(`⏱ Timeout loading ${playerKey} (${samplePath})`)
+              console.warn(`   Player loaded state: ${player.loaded}`)
+              console.warn(`   Player state: ${player.state}`)
               reject(new Error(`Timeout loading ${playerKey}`))
             }
-          }, 8000)
+          }, 15000)
           
           // Poll for load completion
           const pollInterval = setInterval(() => {

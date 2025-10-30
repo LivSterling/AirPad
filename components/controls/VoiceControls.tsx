@@ -30,27 +30,61 @@ export default function VoiceControls({
         case 'record':
           onRecordingChange(true)
           store.setRecording(true)
+          voiceController.speak('Recording started')
           break
         case 'stop':
           onRecordingChange(false)
           store.setRecording(false)
+          voiceController.speak('Recording stopped')
+          break
+        case 'clear':
+          store.clearCurrentLoop()
+          voiceController.speak('Loop cleared')
+          break
+        case 'save loop':
+          if (store.currentLoop.length === 0) {
+            voiceController.speak('No recording to save')
+          } else {
+            store.saveCurrentLoop()
+            voiceController.speak(`Loop saved with ${store.currentLoop.length} events`)
+          }
+          break
+        case 'play all':
+          if (store.savedLoops.length === 0) {
+            voiceController.speak('No saved loops to play')
+          } else {
+            store.setPlaying(true)
+            voiceController.speak(`Playing ${store.savedLoops.length} loops`)
+          }
+          break
+        case 'stop all':
+          store.setPlaying(false)
+          voiceController.speak('All loops stopped')
+          break
+        case 'open help':
+          onInstructionsToggle(true)
+          voiceController.speak('Instructions opened')
+          break
+        case 'close help':
+          onInstructionsToggle(false)
+          voiceController.speak('Instructions closed')
           break
         case 'kit:drums':
         case 'kit:drum':
           onKitChange('drums')
           store.setCurrentKit('drums')
+          voiceController.speak('Switched to drums')
           break
         case 'kit:piano':
           onKitChange('piano')
           store.setCurrentKit('piano')
+          voiceController.speak('Switched to piano')
           break
         case 'kit:synth':
         case 'kit:funk':
           onKitChange('synth')
           store.setCurrentKit('synth')
-          break
-        case 'clear':
-          // Handle clear command
+          voiceController.speak('Switched to synth')
           break
         default:
           console.log('Unknown command:', command)
