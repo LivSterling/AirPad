@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react'
 import PadGrid from '@/components/grid/PadGrid'
 import VoiceControls from '@/components/controls/VoiceControls'
 import InstructionsOverlay from '@/components/ui/InstructionsOverlay'
+import StatusDisplay from '@/components/ui/StatusDisplay'
 import { AudioEngine } from '@/lib/audio/AudioEngine'
 import { HandTracker } from '@/lib/tracking/HandTracker'
 import { VoiceController } from '@/lib/voice/VoiceController'
 import { AudioStoreConnector } from '@/lib/integration/AudioStoreConnector'
+import { useAppStore } from '@/lib/store'
 import type { KitType } from '@/types'
 
 export default function Home() {
@@ -16,6 +18,14 @@ export default function Home() {
   const [currentKit, setCurrentKit] = useState<KitType>('drums')
   const [isRecording, setIsRecording] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
+  
+  // Use Zustand selectors for reactive state
+  const savedLoops = useAppStore((state) => state.savedLoops)
+  const isPlaying = useAppStore((state) => state.isPlaying)
+  const currentLoop = useAppStore((state) => state.currentLoop)
+  
+  const savedLoopCount = savedLoops.length
+  const recordingEventCount = currentLoop.length
 
   // Initialize AudioStoreConnector on client-side only
   useEffect(() => {
@@ -152,12 +162,20 @@ export default function Home() {
         {/* Dark overlay to make UI elements visible over camera */}
         <div className="absolute inset-0 bg-black bg-opacity-30 pointer-events-none" style={{ zIndex: -50 }} />
         
+        {/* Status Display - Top Right */}
+        <StatusDisplay 
+          isRecording={isRecording}
+          currentKit={currentKit}
+          savedLoopCount={savedLoopCount}
+          isPlaying={isPlaying}
+          recordingEventCount={recordingEventCount}
+        />
+
         {/* Compact Header */}
         <header className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 text-center">
           <h1 className="text-3xl font-bold text-white drop-shadow-lg mb-1">AirPad</h1>
           <div className="text-sm bg-black bg-opacity-50 text-white px-4 py-1 rounded-full backdrop-blur-sm">
-            <span className="capitalize">{currentKit}</span>
-            {isRecording && <span className="ml-3 text-red-400">● REC</span>}
+            <span className="capitalize">Ready</span>
           </div>
         </header>
 
