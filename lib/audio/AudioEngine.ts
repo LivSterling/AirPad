@@ -92,70 +92,94 @@ export class AudioEngine implements IAudioEngine {
     }
 
     try {
+      console.log(`🔄 Switching to kit: ${kitType}`)
+      console.log(`   Already loaded: ${Array.from(this.loadedKits)}`)
+      
       // Load kit if not already loaded
       if (!this.loadedKits.has(kitType)) {
+        console.log(`   ⬇️ Loading ${kitType} kit...`)
         await this.loadKit(kitType)
+        console.log(`   ✓ ${kitType} kit loaded successfully`)
+      } else {
+        console.log(`   ⏩ ${kitType} already loaded, skipping`)
       }
       
       this.currentKit = kitType
-      console.log(`Switched to kit: ${kitType}`)
+      console.log(`✓ Switched to kit: ${kitType}`)
     } catch (error) {
-      const audioError = new AudioEngineError('SAMPLE_LOAD_FAILED')
-      audioError.details = { kitType, error }
-      throw audioError
+      console.error(`❌ Failed to switch to ${kitType}:`, error)
+      throw error
     }
   }
 
   private async loadKit(kitType: KitType): Promise<void> {
+    console.log(`📦 Loading kit: ${kitType}`)
     const loadPromises: Promise<void>[] = []
 
     for (let padIndex = 0; padIndex < 9; padIndex++) {
       const samplePath = getSamplePath(kitType, padIndex)
       const playerKey = `${kitType}-${padIndex}`
       
+      console.log(`   Pad ${padIndex}: path="${samplePath}" key="${playerKey}" exists=${this.players.has(playerKey)}`)
+      
       if (!this.players.has(playerKey) && samplePath) {
+        console.log(`      → Creating player for ${playerKey}`)
         const player = new Tone.Player({
           url: samplePath,
+          onload: () => {
+            console.log(`      ✓ onload callback: ${playerKey}`)
+          },
+          onerror: (err: any) => {
+            console.error(`      ❌ onerror callback for ${playerKey}:`, err)
+          }
         }).connect(this.masterGain)
         
         this.players.set(playerKey, player)
+        console.log(`      ✓ Player created. Total players now: ${this.players.size}`)
         
         // Wait for sample to load
-        // Note: Tone.js Player automatically loads samples asynchronously
         const loadPromise = new Promise<void>((resolve, reject) => {
-          // Check if already loaded
-          if (player.loaded) {
-            resolve()
-            return
-          }
+          let isResolved = false
           
-          // Poll for load completion (Tone.js doesn't provide promise-based loading)
-          const checkInterval = setInterval(() => {
-            if (player.loaded) {
-              clearInterval(checkInterval)
-              console.log(`Loaded: ${playerKey}`)
-              resolve()
-            }
-          }, 50)
-          
-          // Timeout after 5 seconds
-          setTimeout(() => {
-            clearInterval(checkInterval)
-            if (!player.loaded) {
-              console.warn(`Timeout loading ${playerKey}`)
+          // Set timeout
+          const timeoutId = setTimeout(() => {
+            if (!isResolved) {
+              isResolved = true
+              console.warn(`⏱ Timeout loading ${playerKey} (${samplePath})`)
               reject(new Error(`Timeout loading ${playerKey}`))
             }
-          }, 5000)
+          }, 8000)
+          
+          // Poll for load completion
+          const pollInterval = setInterval(() => {
+            if (player.loaded && !isResolved) {
+              isResolved = true
+              clearInterval(pollInterval)
+              clearTimeout(timeoutId)
+              console.log(`      ✓ Loaded: ${playerKey}`)
+              resolve()
+            }
+          }, 100)
         })
         
         loadPromises.push(loadPromise)
+      } else if (this.players.has(playerKey)) {
+        console.log(`      ⏩ Already exists`)
       }
     }
 
     if (loadPromises.length > 0) {
-      await Promise.all(loadPromises)
-      this.loadedKits.add(kitType)
-      console.log(`Kit loaded: ${kitType}`)
+      console.log(`   Waiting for ${loadPromises.length} samples to load...`)
+      try {
+        await Promise.all(loadPromises)
+        this.loadedKits.add(kitType)
+        console.log(`✓ Kit loaded: ${kitType}`)
+      } catch (error) {
+        console.error(`❌ Error loading kit ${kitType}:`, error)
+        throw error
+      }
+    } else {
+      console.log(`   No new samples to load`)
     }
   }
 

@@ -1,12 +1,13 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import PadGrid from '@/components/grid/PadGrid'
 import VoiceControls from '@/components/controls/VoiceControls'
 import InstructionsOverlay from '@/components/ui/InstructionsOverlay'
 import { AudioEngine } from '@/lib/audio/AudioEngine'
 import { HandTracker } from '@/lib/tracking/HandTracker'
 import { VoiceController } from '@/lib/voice/VoiceController'
-import { KitType } from '@/types/audio'
+import { AudioStoreConnector } from '@/lib/integration/AudioStoreConnector'
+import type { KitType } from '@/types'
 
 export default function Home() {
   const [isInitialized, setIsInitialized] = useState(false)
@@ -15,6 +16,14 @@ export default function Home() {
   const [currentKit, setCurrentKit] = useState<KitType>('drums')
   const [isRecording, setIsRecording] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
+
+  // Initialize AudioStoreConnector on client-side only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      console.log('Setting up AudioStoreConnector...')
+      AudioStoreConnector.getInstance().initialize()
+    }
+  }, [])
 
   const handleStart = async () => {
     setIsInitializing(true)
