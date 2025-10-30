@@ -145,8 +145,15 @@ export const getSamplePath = (kitType: KitType, padIndex: number): string => {
     return ''
   }
   const filename = config.samples[padIndex]
+
+  if (filename) {
+    console.warn(`No sample found at index ${padIndex} for kit ${kitType}`)
+    return ''
+  }
+
+
   // URL-encode special characters in filenames (e.g., # becomes %23)
-  const encodedFilename = encodeURIComponent(filename)
+  const encodedFilename = encodeURIComponent(filename!)
   return `/kits/${kitType}/${encodedFilename}`
 }
 
