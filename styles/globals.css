@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-black text-white;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .pad {
+    @apply w-pad h-pad bg-pad-inactive border-2 border-gray-600 rounded-lg;
+    @apply flex items-center justify-center text-white font-semibold text-lg;
+    @apply transition-all duration-150 ease-in-out;
+    @apply hover:bg-pad-hover hover:border-blue-400;
+    @apply active:scale-95;
+  }
+  
+  .pad-active {
+    @apply bg-pad-active border-blue-300 shadow-lg;
+    @apply animate-pulse-fast;
+  }
+  
+  .pad-triggered {
+    @apply bg-green-500 border-green-300;
+    animation: trigger-flash 0.3s ease-out;
+  }
+  
+  .recording-indicator {
+    @apply bg-recording border-red-300;
+    @apply animate-ping-slow;
+  }
+  
+  .voice-button {
+    @apply px-4 py-2 rounded-lg border border-gray-600;
+    @apply bg-gray-800 text-white font-medium;
+    @apply hover:bg-gray-700 hover:border-gray-500;
+    @apply active:bg-gray-600;
+    @apply transition-all duration-150;
+  }
+  
+  .voice-button-active {
+    @apply bg-blue-600 border-blue-400 text-white;
+    @apply hover:bg-blue-500;
+  }
+}
+
+@layer utilities {
+  .grid-3x3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+@keyframes trigger-flash {
+  0% { 
+    background-color: theme('colors.green.500');
+    transform: scale(1);
+  }
+  50% { 
+    background-color: theme('colors.green.300');
+    transform: scale(1.05);
+  }
+  100% { 
+    background-color: theme('colors.pad-inactive');
+    transform: scale(1);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pad,
+  .voice-button {
+    transition: none;
+  }
+  
+  .animate-pulse-fast,
+  .animate-ping-slow {
+    animation: none;
+  }
+}
