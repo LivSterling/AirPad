@@ -58,8 +58,8 @@ export const getKitConfig = (kitType: KitType) => {
       samples: [
         'kick-drum-105.wav',                           // Pad 0: Kick
         'short-percussive-trap-snare-one-shot.wav',  // Pad 1: Snare
-        'open-hat-high.wav',                           // Pad 2: Hi-Hat
-        'flame-phonk-kick_D#_major.wav',              // Pad 3: Secondary Kick
+        'open-hat-high.wav',                           // Pad 2: Open Hat
+        'phonk-closed-hi-hats-thin_C_minor.wav',              // Pad 3: Hi-Hat
         'clean-808-trap-clap.wav',                     // Pad 4: Clap
         'short-808-bass-boom_C_major.wav',            // Pad 5: Bass
         'stomping-grind-808_103bpm_E_minor.wav',     // Pad 6: Grind
@@ -69,8 +69,8 @@ export const getKitConfig = (kitType: KitType) => {
       labels: [
         'Kick',
         'Snare',
+        'Open Hat',
         'Hi-Hat',
-        'Kick 2',
         'Clap',
         'Bass',
         'Grind',

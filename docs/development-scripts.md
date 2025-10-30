@@ -289,3 +289,4 @@ Scripts automatically use `.env.local` for configuration. See `docs/environment-
 - Add deployment scripts for production
 - Consider adding git hooks with `husky` for automatic validation
 
+

@@ -367,3 +367,4 @@ export function reportWebVitals(metric) {
 4. Add performance budgets in CI/CD
 5. Monitor Core Web Vitals in production
 
+

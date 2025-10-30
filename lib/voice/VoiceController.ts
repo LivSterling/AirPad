@@ -3,7 +3,7 @@ import { matchIntent } from '../../vocab'
 
 export class VoiceController {
   private static instance: VoiceController
-  private recognition: SpeechRecognition | null = null
+  private recognition: any = null
   private synthesis: SpeechSynthesis | null = null
   private isInitialized = false
   private isListening = false
@@ -63,7 +63,7 @@ export class VoiceController {
         }, 1000)
       }
 
-      this.recognition.onresult = (event) => {
+      this.recognition.onresult = (event: any) => {
         const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim()
         console.log('Voice input:', transcript)
         
@@ -77,7 +77,7 @@ export class VoiceController {
         }
       }
 
-      this.recognition.onerror = (event) => {
+      this.recognition.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error)
         if (event.error === 'not-allowed') {
           alert('Microphone access denied. Please allow microphone access for voice commands.')

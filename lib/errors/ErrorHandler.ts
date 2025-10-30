@@ -302,7 +302,7 @@ export class ErrorHandler implements IErrorHandler {
   /**
    * Reset strategy
    */
-  private async resetRecovery(error: AppError, config: ErrorConfig): Promise<void> {
+  private async resetRecovery(error: AppError, _config: ErrorConfig): Promise<void> {
     console.log(`Resetting ${error.system}`)
     
     // Clear any cached state for this system
@@ -365,7 +365,6 @@ export class ErrorHandler implements IErrorHandler {
    * Log error with context
    */
   private logError(error: AppError): void {
-    const logLevel = error.recoverable ? 'warn' : 'error'
     const logMessage = `[${error.system.toUpperCase()}] ${error.code}: ${error.message}`
 
     console.group(logMessage)
@@ -392,7 +391,7 @@ export class ErrorHandler implements IErrorHandler {
   /**
    * Send error to logging service (future)
    */
-  private sendToLoggingService(error: AppError): void {
+  private sendToLoggingService(_error: AppError): void {
     // TODO: Implement logging service integration (Sentry, LogRocket, etc.)
     // Example:
     // Sentry.captureException(error.originalError, {
@@ -475,3 +474,4 @@ export function useErrorHandler(): ErrorHandler {
 }
 
 export default ErrorHandler
+

@@ -25,7 +25,7 @@ export class KitManager {
     this.availableKits.set('drums', {
       name: drumConfig.name,
       type: 'drums',
-      samples: drumConfig.samples.map((sample, index) => `/kits/drums/${sample}`),
+      samples: drumConfig.samples.map((sample) => `/kits/drums/${sample}`),
       metadata: {
         bpm: 120,
         key: 'C',
@@ -38,7 +38,7 @@ export class KitManager {
     this.availableKits.set('piano', {
       name: pianoConfig.name,
       type: 'piano',
-      samples: pianoConfig.samples.map((sample, index) => `/kits/piano/${sample}`),
+      samples: pianoConfig.samples.map((sample) => `/kits/piano/${sample}`),
       metadata: {
         bpm: 120,
         key: 'C',
@@ -51,7 +51,7 @@ export class KitManager {
     this.availableKits.set('synth', {
       name: synthConfig.name,
       type: 'synth',
-      samples: synthConfig.samples.map((sample, index) => `/kits/synth/${sample}`),
+      samples: synthConfig.samples.map((sample) => `/kits/synth/${sample}`),
       metadata: {
         bpm: 128,
         key: 'C',
@@ -79,13 +79,13 @@ export class KitManager {
   public getNextKit(currentKit: KitType): KitType {
     const types = this.getKitTypes()
     const currentIndex = types.indexOf(currentKit)
-    return types[(currentIndex + 1) % types.length]
+    return types[(currentIndex + 1) % types.length] as KitType
   }
 
   public getPreviousKit(currentKit: KitType): KitType {
     const types = this.getKitTypes()
     const currentIndex = types.indexOf(currentKit)
-    return types[(currentIndex - 1 + types.length) % types.length]
+    return types[(currentIndex - 1 + types.length) % types.length] as KitType
   }
 
   public getSamplePaths(kitType: KitType): string[] {
