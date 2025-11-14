@@ -142,6 +142,7 @@ export interface AppStore extends AppState {
   clearCurrentLoop: () => void
   addSavedLoop: (loop: LoopData) => void
   removeSavedLoop: (loopId: string) => void
+  clearAllLoops: () => void
   toggleActiveLoop: (loopId: string) => void
   
   // UI actions

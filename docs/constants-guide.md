@@ -480,3 +480,10 @@ const kit: typeof KITS.TYPES[number] = 'drums'  // Only 'drums' | 'piano' | 'syn
 This prevents typos and enables IDE autocomplete!
 
 
+
+
+
+
+
+
+

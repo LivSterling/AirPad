@@ -61,6 +61,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
                 <ul className="space-y-1 text-xs">
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"play all"</code> Play</li>
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"stop all"</code> Stop</li>
+                  <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"clear all"</code> Clear all loops</li>
                 </ul>
               </div>
               <div className="bg-white bg-opacity-3 p-3 rounded border border-purple-400 border-opacity-30">

@@ -290,3 +290,10 @@ Scripts automatically use `.env.local` for configuration. See `docs/environment-
 - Consider adding git hooks with `husky` for automatic validation
 
 
+
+
+
+
+
+
+

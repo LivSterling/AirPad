@@ -143,3 +143,10 @@ Wrap the component with ErrorBoundary:
 - [ ] User-friendly error messages
 - [ ] No console errors on normal operation
 
+
+
+
+
+
+
+

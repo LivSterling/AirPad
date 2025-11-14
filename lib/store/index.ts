@@ -114,6 +114,18 @@ export const useAppStore = create<StoreState>()(
           )
         },
 
+        clearAllLoops: () => {
+          set(
+            {
+              savedLoops: [],
+              activeLoops: [],
+              currentLoop: []
+            },
+            false,
+            'clearAllLoops'
+          )
+        },
+
         toggleActiveLoop: (loopId: string) => {
           set(
             (state) => {

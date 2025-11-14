@@ -2,6 +2,7 @@ const intents = [
   { name:'record',      kws:['record','start recording','start'] },
   { name:'stop',        kws:['stop','finish','end','stop recording'] },
   { name:'clear',       kws:['clear','reset','erase','delete loop'] },
+  { name:'clear all',   kws:['clear all','clear everything','delete all','clear all loops','delete all loops'] },
   { name:'save loop',   kws:['save','save loop','save recording'] },
   { name:'play all',    kws:['play all','play loops','play everything'] },
   { name:'stop all',    kws:['stop all','stop loops','stop everything'] },
@@ -11,6 +12,7 @@ const intents = [
   { name:'kit:synth',   kws:['synth','synth kit','set kit synth','funk kit'] },
   { name:'kit:piano',   kws:['piano','keys','set kit piano'] },
   { name:'export',      kws:['export','download image','save image'] },
+  { name:'silence',     kws:['silence','stop sounds','quiet','mute','all stop'] },
 ];
 
 export function matchIntent(text: string): string | null {

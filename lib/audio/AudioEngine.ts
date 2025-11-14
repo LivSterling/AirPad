@@ -261,7 +261,7 @@ export class AudioEngine implements IAudioEngine {
   private recordEvent(padIndex: PadIndex, kitType: KitType, velocity: number = 1): void {
     if (!this.isRecording) return
     
-    // Calculate timestamp relative to recording start
+    // Calculate timestamp relative to recording start (in milliseconds)
     const timestamp = (Tone.now() - this.recordingStartTime) * 1000
     
     // Create and store the event
@@ -273,7 +273,7 @@ export class AudioEngine implements IAudioEngine {
     }
     
     this.recordedEvents.push(event)
-    console.log(`Recorded event: Pad ${padIndex}, T: ${timestamp.toFixed(0)}ms`)
+    console.log(`📼 Recorded event: Pad ${padIndex}, T: ${timestamp.toFixed(0)}ms, Total: ${this.recordedEvents.length}`)
   }
 
   public playLoop(loopId: string, events: RecordedEvent[]): void {
@@ -282,31 +282,52 @@ export class AudioEngine implements IAudioEngine {
       return
     }
 
+    if (events.length === 0) {
+      console.warn(`Loop ${loopId} has no events to play`)
+      return
+    }
+
     try {
       // Calculate loop duration from events
       const maxEventTime = Math.max(...events.map(e => e.timestamp), 1000)
       const loopDuration = this.masterLoopLength || maxEventTime
       
-      // Create Tone.js loop with modulo timing for subsequent takes
+      console.log(`🔁 Creating loop: ${loopId}, duration: ${loopDuration.toFixed(0)}ms, events: ${events.length}`)
+      
+      // Create Tone.js loop - callback is called every loop iteration
       const loop = new Tone.Loop((time) => {
+        // Schedule each event at its timestamp offset from loop start
         events.forEach(event => {
-          // Schedule event with modulo timing so it repeats properly
-          const eventTime = (event.timestamp % loopDuration) / 1000 // Convert to seconds
-          Tone.Transport.schedule(() => {
-            this.triggerPad(event.padIndex, event.kitType, event.velocity || 1)
-          }, time + eventTime)
+          // Convert timestamp from milliseconds to seconds
+          const eventTime = (event.timestamp % loopDuration) / 1000
+          
+          // Create a player reference for triggering
+          const playerKey = `${event.kitType}-${event.padIndex}`
+          const player = this.players.get(playerKey)
+          
+          if (player && player.loaded && player.buffer) {
+            // Create a NEW buffer source for each scheduled sound (can't reuse Players)
+            const volumeDb = -10 + ((event.velocity || 1) * 10)
+            const volume = new Tone.Volume(volumeDb).toDestination()
+            const bufferSource = new Tone.ToneBufferSource(player.buffer).connect(volume)
+            bufferSource.start(time + eventTime)
+            console.log(`  🎵 Scheduled ${playerKey} at +${eventTime.toFixed(3)}s (vol: ${volumeDb.toFixed(1)}dB)`)
+          } else {
+            console.warn(`  ⚠️ Player not found or not loaded: ${playerKey}`)
+          }
         })
       }, `${loopDuration / 1000}s`)
 
       this.activeLoops.set(loopId, loop)
-      loop.start()
+      loop.start(0) // Start immediately on next transport tick
 
       // Ensure transport is running
       if (Tone.Transport.state !== 'started') {
+        console.log('▶️ Starting Tone.Transport')
         Tone.Transport.start()
       }
 
-      console.log(`Started playing loop: ${loopId} (duration: ${loopDuration.toFixed(0)}ms)`)
+      console.log(`✅ Started playing loop: ${loopId} (duration: ${loopDuration.toFixed(0)}ms, ${events.length} events)`)
     } catch (error) {
       console.error(`Failed to play loop ${loopId}:`, error)
       throw new Error(`Failed to play loop: ${error}`)
@@ -378,6 +399,24 @@ export class AudioEngine implements IAudioEngine {
 
   public resume(): void {
     Tone.Transport.start()
+  }
+
+  /**
+   * Stop all currently playing sounds (for "silence" command)
+   */
+  public stopAllActiveSounds(): void {
+    try {
+      // Stop all players from all kits
+      this.players.forEach((player) => {
+        if (player.state === 'started') {
+          player.stop()
+        }
+      })
+
+      console.log('🔇 All active sounds stopped')
+    } catch (error) {
+      console.error('Failed to stop all active sounds:', error)
+    }
   }
 
   public dispose(): void {

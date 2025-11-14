@@ -9,6 +9,7 @@
  */
 
 import { AudioEngine } from '@/lib/audio/AudioEngine'
+import { LoopManager } from '@/lib/audio/LoopManager'
 import { useAppStore } from '@/lib/store'
 import { EventBus } from '@/lib/events/EventBus'
 import { ERROR_CODES } from '@/lib/constants'
@@ -23,11 +24,13 @@ type UnsubscribeCallback = () => void
 export class AudioStoreConnector {
   private static instance: AudioStoreConnector
   private audioEngine: AudioEngine
+  private loopManager: LoopManager
   private unsubscribers: UnsubscribeCallback[] = []
   private initialized = false
 
   private constructor() {
     this.audioEngine = AudioEngine.getInstance()
+    this.loopManager = LoopManager.getInstance()
   }
 
   public static getInstance(): AudioStoreConnector {
@@ -122,10 +125,25 @@ export class AudioStoreConnector {
       if (state.isRecording !== previousRecording) {
         previousRecording = state.isRecording
         if (state.isRecording) {
+          // Start recording in AudioEngine
           this.audioEngine.startRecording()
           EventBus.emit('recording:started')
+          console.log('🔴 Recording started via store')
         } else {
+          // Stop recording and get the recorded loop data
           const loopData = this.audioEngine.stopRecording()
+          console.log('⏹️ Recording stopped via store, events:', loopData?.events.length || 0)
+          
+          // Save the recorded events to the store's currentLoop
+          if (loopData && loopData.events.length > 0) {
+            // Clear existing currentLoop and add all recorded events
+            useAppStore.getState().clearCurrentLoop()
+            loopData.events.forEach(event => {
+              useAppStore.getState().addRecordedEvent(event)
+            })
+            console.log(`✅ Saved ${loopData.events.length} events to currentLoop`)
+          }
+          
           EventBus.emit('recording:stopped', { loopData })
         }
       }
@@ -138,16 +156,19 @@ export class AudioStoreConnector {
       if (state.isPlaying !== previousPlaying) {
         previousPlaying = state.isPlaying
         if (state.isPlaying) {
-          // Start playing active loops
-          state.activeLoops.forEach((loopId) => {
-            const loop = state.savedLoops.find((l) => l.id === loopId)
-            if (loop) {
-              this.audioEngine.playLoop(loopId, loop.events)
-            }
-          })
+          // Play ALL saved loops using LoopManager
+          console.log(`▶️ Playing ${state.savedLoops.length} saved loops`)
+          if (state.savedLoops.length === 0) {
+            console.warn('⚠️ No loops to play')
+            useAppStore.getState().setPlaying(false) // Auto-stop if no loops
+          } else {
+            this.loopManager.playAllLoops(state.savedLoops)
+          }
           EventBus.emit('playback:started')
         } else {
-          this.audioEngine.stopAllLoops()
+          // Stop all loops
+          console.log('⏹️ Stopping all loops')
+          this.loopManager.stopAllLoops()
           EventBus.emit('playback:stopped')
         }
       }
@@ -165,16 +186,10 @@ export class AudioStoreConnector {
     EventBus.on('gesture:padTriggered', ({ padIndex, velocity }: { padIndex: PadIndex; velocity: number }) => {
       const state = store.getState()
       this.audioEngine.triggerPad(padIndex, state.currentKit, velocity)
-
-      // If recording, capture the event
-      if (state.isRecording) {
-        store.getState().addRecordedEvent({
-          padIndex,
-          timestamp: Date.now(),
-          kitType: state.currentKit,
-          velocity,
-        })
-      }
+      
+      // NOTE: Recording is handled internally by AudioEngine.triggerPad()
+      // which calls recordEvent() when this.isRecording is true
+      // No need to duplicate recording logic here
     })
 
     // Listen to loop stack changes
@@ -207,15 +222,9 @@ export class AudioStoreConnector {
   public triggerPad(padIndex: PadIndex, velocity: number = 1): void {
     const state = useAppStore.getState()
     this.audioEngine.triggerPad(padIndex, state.currentKit, velocity)
-
-    if (state.isRecording) {
-      state.addRecordedEvent({
-        padIndex,
-        timestamp: Date.now(),
-        kitType: state.currentKit,
-        velocity,
-      })
-    }
+    
+    // NOTE: Recording is handled internally by AudioEngine.triggerPad()
+    // The recorded events are added to the store when recording stops
   }
 
   /**

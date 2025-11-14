@@ -4,7 +4,6 @@ import PadGrid from '@/components/grid/PadGrid'
 import VoiceControls from '@/components/controls/VoiceControls'
 import InstructionsOverlay from '@/components/ui/InstructionsOverlay'
 import StatusDisplay from '@/components/ui/StatusDisplay'
-import FallbackControls from '@/components/ui/FallbackControls'
 import { AudioEngine } from '@/lib/audio/AudioEngine'
 import { HandTracker } from '@/lib/tracking/HandTracker'
 import { VoiceController } from '@/lib/voice/VoiceController'
@@ -191,35 +190,11 @@ export default function Home() {
           />
         </div>
 
-        {/* Voice Controls UI */}
+        {/* Consolidated Voice & Manual Controls */}
         <VoiceControls 
           onKitChange={setCurrentKit}
           onRecordingChange={setIsRecording}
           onInstructionsToggle={setShowInstructions}
-        />
-
-        {/* Fallback Manual Controls */}
-        <FallbackControls
-          isRecording={isRecording}
-          onRecord={() => {
-            setIsRecording(true)
-            useAppStore.getState().setRecording(true)
-          }}
-          onStop={() => {
-            setIsRecording(false)
-            useAppStore.getState().setRecording(false)
-          }}
-          onPlayAll={() => {
-            useAppStore.getState().setPlaying(true)
-          }}
-          onStopAll={() => {
-            useAppStore.getState().setPlaying(false)
-          }}
-          onKitChange={setCurrentKit}
-          onClear={() => {
-            useAppStore.getState().clearCurrentLoop()
-          }}
-          currentKit={currentKit}
         />
 
         {/* Instructions Overlay */}

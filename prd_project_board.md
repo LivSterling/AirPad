@@ -139,29 +139,7 @@
   - *Dependency: T1.8*
 
 #### **Day 2 (8 hours)**
-- **T2.6** Advanced Voice Commands *(3h)*
-  - Implement "save loop", "clear", "play all", "stop all"
-  - Add "toggle instrumental/vocal" for stems
-  - Implement "open/close instructions"
-  - *Dependency: T1.9, T2.3*
-
-- **T2.7** Instructions Overlay *(2h)*
-  - Create help panel with usage instructions
-  - Implement show/hide functionality
-  - Add voice command reference
-  - *Dependency: T1.7*
-
-- **T2.8** UI Polish & Visual Feedback *(2h)*
-  - Add recording state indicators
-  - Implement kit selection display
-  - Create loop stack visualization
-  - Add loading states and error messages
-  - *Dependency: All core features working*
-
-- **T2.9** Fallback Controls *(1h)*
-  - Add on-screen buttons for demo reliability
-  - Implement backup record/stop/play controls
-  - Emergency kit switching buttons
+ 
   - *Dependency: T2.8*
 
 ---

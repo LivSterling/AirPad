@@ -264,3 +264,10 @@ The 4 root samples can be used for:
 
 All audio samples are correctly mapped and the audio engine can now successfully load and play samples from all three kits.
 
+
+
+
+
+
+
+

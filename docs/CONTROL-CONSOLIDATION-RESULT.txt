@@ -1,0 +1,5 @@
+uid=2_0 RootWebArea "AirPad MVP - Hands-Free Air Instrument" url="http://localhost:3000/"
+  uid=2_1 heading "🎵 AirPad" level="1"
+  uid=2_2 StaticText "Hands-free air instrument"
+  uid=2_3 button "Click to Start"
+  uid=2_4 StaticText "Camera and microphone permissions required"

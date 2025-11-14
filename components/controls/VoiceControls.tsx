@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { VoiceController } from '@/lib/voice/VoiceController'
+import { AudioEngine } from '@/lib/audio/AudioEngine'
 import { useAppStore } from '@/lib/store'
 import type { KitType } from '@/types'
 
@@ -40,6 +41,11 @@ export default function VoiceControls({
         case 'clear':
           store.clearCurrentLoop()
           voiceController.speak('Loop cleared')
+          break
+        case 'clear all':
+          store.setPlaying(false) // Stop playback first
+          store.clearAllLoops()
+          voiceController.speak('All loops cleared')
           break
         case 'save loop':
           if (store.currentLoop.length === 0) {
@@ -86,6 +92,10 @@ export default function VoiceControls({
           store.setCurrentKit('synth')
           voiceController.speak('Switched to synth')
           break
+        case 'silence':
+          AudioEngine.getInstance().stopAllActiveSounds()
+          voiceController.speak('All sounds stopped')
+          break
         default:
           console.log('Unknown command:', command)
       }
@@ -122,8 +132,9 @@ export default function VoiceControls({
           )}
         </div>
 
-        {/* Manual Controls (Fallback) */}
+        {/* Manual Controls (Fallback) - All Actions */}
         <div className="flex flex-wrap gap-2 justify-center">
+          {/* Recording Controls */}
           <button 
             className="px-3 py-1.5 rounded-lg bg-white bg-opacity-10 hover:bg-opacity-20 border border-white border-opacity-30 text-white text-xs font-medium transition-all backdrop-blur-sm"
             onClick={() => handleManualCommand('record')}
@@ -142,6 +153,28 @@ export default function VoiceControls({
           >
             Clear
           </button>
+
+          {/* Loop Controls */}
+          <button 
+            className="px-3 py-1.5 rounded-lg bg-white bg-opacity-10 hover:bg-opacity-20 border border-white border-opacity-30 text-white text-xs font-medium transition-all backdrop-blur-sm"
+            onClick={() => handleManualCommand('play all')}
+          >
+            Play All
+          </button>
+          <button 
+            className="px-3 py-1.5 rounded-lg bg-white bg-opacity-10 hover:bg-opacity-20 border border-white border-opacity-30 text-white text-xs font-medium transition-all backdrop-blur-sm"
+            onClick={() => handleManualCommand('stop all')}
+          >
+            Stop All
+          </button>
+          <button 
+            className="px-3 py-1.5 rounded-lg bg-white bg-opacity-10 hover:bg-opacity-20 border border-white border-opacity-30 text-white text-xs font-medium transition-all backdrop-blur-sm"
+            onClick={() => handleManualCommand('clear all')}
+          >
+            Clear All
+          </button>
+
+          {/* Kit Selection */}
           <button 
             className="px-3 py-1.5 rounded-lg bg-blue-500 bg-opacity-30 hover:bg-opacity-50 border border-blue-400 border-opacity-50 text-white text-xs font-medium transition-all backdrop-blur-sm"
             onClick={() => handleManualCommand('kit:drums')}
@@ -159,6 +192,14 @@ export default function VoiceControls({
             onClick={() => handleManualCommand('kit:synth')}
           >
             Synth
+          </button>
+
+          {/* Utility */}
+          <button 
+            className="px-3 py-1.5 rounded-lg bg-red-500 bg-opacity-30 hover:bg-opacity-50 border border-red-400 border-opacity-50 text-white text-xs font-medium transition-all backdrop-blur-sm"
+            onClick={() => handleManualCommand('silence')}
+          >
+            🔇 Silence
           </button>
           <button 
             className="px-3 py-1.5 rounded-lg bg-green-500 bg-opacity-30 hover:bg-opacity-50 border border-green-400 border-opacity-50 text-white text-xs font-medium transition-all backdrop-blur-sm"
