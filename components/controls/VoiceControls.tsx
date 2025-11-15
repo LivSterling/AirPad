@@ -27,73 +27,59 @@ export default function VoiceControls({
       setLastCommand(command)
       
       // Handle different commands
+      // Note: VoiceController already says "Command received" for all commands
       switch (command) {
         case 'record':
           onRecordingChange(true)
           store.setRecording(true)
-          voiceController.speak('Recording started')
           break
         case 'stop':
           onRecordingChange(false)
           store.setRecording(false)
-          voiceController.speak('Recording stopped')
           break
         case 'clear':
           store.clearCurrentLoop()
-          voiceController.speak('Loop cleared')
           break
         case 'clear all':
           store.setPlaying(false) // Stop playback first
           store.clearAllLoops()
-          voiceController.speak('All loops cleared')
           break
         case 'save loop':
-          if (store.currentLoop.length === 0) {
-            voiceController.speak('No recording to save')
-          } else {
+          if (store.currentLoop.length > 0) {
             store.saveCurrentLoop()
-            voiceController.speak(`Loop saved with ${store.currentLoop.length} events`)
           }
+          // Visual feedback shows command was received regardless
           break
         case 'play all':
-          if (store.savedLoops.length === 0) {
-            voiceController.speak('No saved loops to play')
-          } else {
+          if (store.savedLoops.length > 0) {
             store.setPlaying(true)
-            voiceController.speak(`Playing ${store.savedLoops.length} loops`)
           }
+          // Visual feedback shows command was received regardless
           break
         case 'stop all':
           store.setPlaying(false)
-          voiceController.speak('All loops stopped')
           break
         case 'open help':
           onInstructionsToggle(true)
-          voiceController.speak('Instructions opened')
           break
         case 'close help':
           onInstructionsToggle(false)
-          voiceController.speak('Instructions closed')
           break
         case 'kit:drums':
         case 'kit:drum':
           onKitChange('drums')
           store.setCurrentKit('drums')
-          voiceController.speak('Switched to drums')
           break
         case 'kit:piano':
           onKitChange('piano')
           store.setCurrentKit('piano')
-          voiceController.speak('Switched to piano')
           break
         case 'kit:funk':
           onKitChange('funk')
           store.setCurrentKit('funk')
-          voiceController.speak('Switched to funk')
           break
         case 'silence':
           AudioEngine.getInstance().stopAllActiveSounds()
-          voiceController.speak('All sounds stopped')
           break
         default:
           console.log('Unknown command:', command)
