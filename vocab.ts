@@ -7,7 +7,7 @@ const intents = [
   { name:'play all',    kws:['play all','play loops','play everything'] },
   { name:'stop all',    kws:['stop all','stop loops','stop everything'] },
   { name:'open help',   kws:['help','open help','show instructions','instructions'] },
-  { name:'close help',  kws:['close help','hide instructions','close instructions'] },
+  { name:'close help',  kws:['close','close help','hide','hide instructions','close instructions','dismiss'] },
   { name:'kit:drums',   kws:['drums','drum kit','set kit drum', 'drum'] },
   { name:'kit:funk',    kws:['funk','funk kit','set kit funk','funky'] },
   { name:'kit:piano',   kws:['piano','keys','set kit piano'] },
