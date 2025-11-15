@@ -29,7 +29,7 @@ I used Goose AI agents to build this in about a week. Instead of coding everythi
 - **Frontend Dev 2** - Implemented the audio engine and loop system
 - **QA Agent** - Tested features and caught bugs
 
-The agents worked together like a real dev team, each handling their part while I coordinated and made decisions. It was wild watching them debug issues and suggest improvements.
+The agents worked together like a real dev team, each handling their part while I coordinated and made decisions. It was wild watching them debug issues using the Chrome Devtools MCP and suggest improvements.
 
 ## Tech Stack
 
@@ -73,9 +73,13 @@ Open [http://localhost:3000](http://localhost:3000) and allow camera and microph
 
 ## The Goose Experience
 
-Building with AI agents was different than I expected. Instead of writing all the code myself, I spent time describing what I wanted and reviewing what the agents built. They caught bugs I would have missed and suggested patterns I hadn't thought of.
+Building with AI agents was different than I expected. Instead of writing all the code myself, I spent time describing what I wanted and reviewing what the agents built. Only jumping into the code to debug more complex issuies and get styling write. They caught bugs I would have missed and suggested patterns I hadn't thought of.
 
-The coolest part was when the QA agent found an infinite loop bug where the voice feedback was triggering new commands. The frontend devs fixed it by removing audio feedback entirely and keeping only visual confirmation. That kind of back-and-forth felt surprisingly natural.
+The coolest part was when the QA agent found an infinite loop bug where the voice feedback was triggering new commands. I was able to fix it by removing audio feedback entirely and keeping only visual confirmation. That kind of back-and-forth felt surprisingly natural. 
+
+Most of my time was spent coordinating the subagents, debugging the harder coding issues that popped up, and dialing in the styling so the interface actually feels as fun and polished as the interaction model.
+
+This kind of work flow gives you a solid base to continue building outh the project on your own after the enitial MVP is reached.
 
 ## Challenges
 
