@@ -25,7 +25,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
         <div className="space-y-6 text-gray-300">
           
           {/* Hand Gestures */}
-          <section className="bg-white bg-opacity-5 rounded-lg p-4 border border-white border-opacity-10">
+          <section className="bg-black bg-opacity-5 rounded-lg p-4 border border-white border-opacity-10">
             <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">👋 Hand Gestures</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-3">
@@ -47,7 +47,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
           <section className="bg-white bg-opacity-5 rounded-lg p-4 border border-white border-opacity-10">
             <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">🎤 Voice Commands</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div className="bg-white bg-opacity-3 p-3 rounded border border-blue-400 border-opacity-30">
+              <div className="bg-white bg-opacity-5 p-3 rounded border border-blue-400 border-opacity-30">
                 <h4 className="font-medium text-blue-400 mb-2">🔴 Recording</h4>
                 <ul className="space-y-1 text-xs">
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"record"</code> Start</li>
@@ -56,7 +56,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"save loop"</code> Save</li>
                 </ul>
               </div>
-              <div className="bg-white bg-opacity-3 p-3 rounded border border-green-400 border-opacity-30">
+              <div className="bg-white bg-opacity-5 p-3 rounded border border-green-400 border-opacity-30">
                 <h4 className="font-medium text-green-400 mb-2">▶️ Playback</h4>
                 <ul className="space-y-1 text-xs">
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"play all"</code> Play</li>
@@ -64,7 +64,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"clear all"</code> Clear all loops</li>
                 </ul>
               </div>
-              <div className="bg-white bg-opacity-3 p-3 rounded border border-purple-400 border-opacity-30">
+              <div className="bg-white bg-opacity-5 p-3 rounded border border-purple-400 border-opacity-30">
                 <h4 className="font-medium text-purple-400 mb-2">🎛️ Kits</h4>
                 <ul className="space-y-1 text-xs">
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"drums"</code> Drum Kit</li>
@@ -72,7 +72,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"funk"</code> Funk Kit</li>
                 </ul>
               </div>
-              <div className="bg-white bg-opacity-3 p-3 rounded border border-cyan-400 border-opacity-30">
+              <div className="bg-white bg-opacity-5 p-3 rounded border border-cyan-400 border-opacity-30">
                 <h4 className="font-medium text-cyan-400 mb-2">❓ Help</h4>
                 <ul className="space-y-1 text-xs">
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"help"</code> Show this</li>
