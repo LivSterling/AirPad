@@ -69,7 +69,7 @@ export default function InstructionsOverlay({ onClose }: InstructionsOverlayProp
                 <ul className="space-y-1 text-xs">
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"drums"</code> Drum Kit</li>
                   <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"piano"</code> Piano Keys</li>
-                  <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"synth"</code> Synth</li>
+                  <li>• <code className="bg-black bg-opacity-50 px-1 rounded">"funk"</code> Funk Kit</li>
                 </ul>
               </div>
               <div className="bg-white bg-opacity-3 p-3 rounded border border-cyan-400 border-opacity-30">

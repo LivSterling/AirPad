@@ -59,10 +59,10 @@ export default function StatusDisplay({
         <span className="text-xl">
           {currentKit === 'drums' && '🥁'}
           {currentKit === 'piano' && '🎹'}
-          {currentKit === 'synth' && '🎛️'}
+          {currentKit === 'funk' && '🎛️'}
         </span>
         <div>
-          <p className="text-white text-sm font-semibold capitalize">{currentKit} Kit</p>
+          <p className="text-white text-sm font-semibold capitalize">{currentKit === 'funk' ? 'Funk' : currentKit} Kit</p>
           <p className="text-purple-200 text-xs">Active</p>
         </div>
       </div>
