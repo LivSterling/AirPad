@@ -71,7 +71,7 @@ export class VoiceController {
         const intent = matchIntent(transcript)
         if (intent) {
           this.processCommand(intent)
-          this.speak(`${intent.replace(':', ' ')} command received`)
+          // Visual feedback only - no audio to avoid microphone pickup
         } else {
           console.log('No matching intent found for:', transcript)
         }
