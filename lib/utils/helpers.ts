@@ -48,10 +48,22 @@ export const calculateBPM = (intervalMs: number): number => {
 }
 
 /**
+ * Map kit type to folder name (for backward compatibility with file paths)
+ */
+const getKitFolderName = (kitType: KitType): string => {
+  // Funk kit uses the synth folder for audio files
+  if (kitType === 'funk') return 'synth'
+  return kitType
+}
+
+/**
  * Get kit configuration
  */
 export const getKitConfig = (kitType: KitType) => {
-  const configs = {
+  // Map funk to synth configuration (but keep display name as Funk)
+  const configKey = kitType === 'funk' ? 'synth' : kitType
+  
+  const configs: Record<string, any> = {
     drums: {
       name: 'Drum Kit',
       // Map to actual drum kit files
@@ -105,8 +117,8 @@ export const getKitConfig = (kitType: KitType) => {
       ]
     },
     synth: {
-      name: 'Synth',
-      // Map to actual synth/electronic files
+      name: 'Funk Kit',
+      // Map to actual funk/Brazilian electronic files
       samples: [
         'brazillian-funk-kick_130bpm_C_major.wav',        // Pad 0: Kick
         'brazilian-funk-snare.wav',                       // Pad 1: Snare
@@ -132,7 +144,7 @@ export const getKitConfig = (kitType: KitType) => {
     }
   }
   
-  return configs[kitType]
+  return configs[configKey]
 }
 
 /**
@@ -155,7 +167,9 @@ export const getSamplePath = (kitType: KitType, padIndex: number): string => {
   
   // URL-encode special characters in filenames (e.g., # becomes %23)
   const encodedFilename = encodeURIComponent(filename)
-  return `/kits/${kitType}/${encodedFilename}`
+  // Use folder mapping for file paths (funk uses synth folder)
+  const folderName = getKitFolderName(kitType)
+  return `/kits/${folderName}/${encodedFilename}`
 }
 
 /**

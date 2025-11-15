@@ -9,7 +9,7 @@ const intents = [
   { name:'open help',   kws:['help','open help','show instructions','instructions'] },
   { name:'close help',  kws:['close help','hide instructions','close instructions'] },
   { name:'kit:drums',   kws:['drums','drum kit','set kit drum', 'drum'] },
-  { name:'kit:synth',   kws:['synth','synth kit','set kit synth','funk kit'] },
+  { name:'kit:funk',    kws:['funk','funk kit','set kit funk','funky'] },
   { name:'kit:piano',   kws:['piano','keys','set kit piano'] },
   { name:'export',      kws:['export','download image','save image'] },
   { name:'silence',     kws:['silence','stop sounds','quiet','mute','all stop'] },

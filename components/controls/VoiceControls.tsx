@@ -86,11 +86,10 @@ export default function VoiceControls({
           store.setCurrentKit('piano')
           voiceController.speak('Switched to piano')
           break
-        case 'kit:synth':
         case 'kit:funk':
-          onKitChange('synth')
-          store.setCurrentKit('synth')
-          voiceController.speak('Switched to synth')
+          onKitChange('funk')
+          store.setCurrentKit('funk')
+          voiceController.speak('Switched to funk')
           break
         case 'silence':
           AudioEngine.getInstance().stopAllActiveSounds()
@@ -189,9 +188,9 @@ export default function VoiceControls({
           </button>
           <button 
             className="px-3 py-1.5 rounded-lg bg-blue-500 bg-opacity-30 hover:bg-opacity-50 border border-blue-400 border-opacity-50 text-white text-xs font-medium transition-all backdrop-blur-sm"
-            onClick={() => handleManualCommand('kit:synth')}
+            onClick={() => handleManualCommand('kit:funk')}
           >
-            Synth
+            🎛️ Funk
           </button>
 
           {/* Utility */}

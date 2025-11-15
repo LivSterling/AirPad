@@ -25,7 +25,7 @@ export class KitManager {
     this.availableKits.set('drums', {
       name: drumConfig.name,
       type: 'drums',
-      samples: drumConfig.samples.map((sample) => `/kits/drums/${sample}`),
+      samples: drumConfig.samples.map((sample: string) => `/kits/drums/${sample}`),
       metadata: {
         bpm: 120,
         key: 'C',
@@ -38,7 +38,7 @@ export class KitManager {
     this.availableKits.set('piano', {
       name: pianoConfig.name,
       type: 'piano',
-      samples: pianoConfig.samples.map((sample) => `/kits/piano/${sample}`),
+      samples: pianoConfig.samples.map((sample: string) => `/kits/piano/${sample}`),
       metadata: {
         bpm: 120,
         key: 'C',
@@ -46,16 +46,16 @@ export class KitManager {
       }
     })
 
-    // Initialize synth kit
-    const synthConfig = getKitConfig('synth')
-    this.availableKits.set('synth', {
-      name: synthConfig.name,
-      type: 'synth',
-      samples: synthConfig.samples.map((sample) => `/kits/synth/${sample}`),
+    // Initialize funk kit (uses synth folder for audio files)
+    const funkConfig = getKitConfig('funk')
+    this.availableKits.set('funk', {
+      name: funkConfig.name,
+      type: 'funk',
+      samples: funkConfig.samples.map((sample: string) => `/kits/synth/${sample}`),
       metadata: {
         bpm: 128,
         key: 'C',
-        genre: 'Electronic'
+        genre: 'Brazilian Funk'
       }
     })
   }
@@ -109,7 +109,7 @@ export class KitManager {
   }
 
   public removeKit(kitType: KitType): boolean {
-    if (['drums', 'piano', 'synth'].includes(kitType)) {
+    if (['drums', 'piano', 'funk'].includes(kitType)) {
       console.warn(`Cannot remove default kit: ${kitType}`)
       return false
     }

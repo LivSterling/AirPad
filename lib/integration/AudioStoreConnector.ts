@@ -58,7 +58,7 @@ export class AudioStoreConnector {
 
       // Pre-load all kits so they're available immediately
       console.log('Pre-loading all kits...')
-      const kits: KitType[] = ['drums', 'piano', 'synth']
+      const kits: KitType[] = ['drums', 'piano', 'funk']
       for (const kit of kits) {
         try {
           console.log(`Loading kit: ${kit}`)

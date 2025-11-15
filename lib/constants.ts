@@ -152,7 +152,7 @@ export const GRID = {
 // =============================================================================
 
 export const KITS = {
-  TYPES: ['drums', 'piano', 'synth'] as const,
+  TYPES: ['drums', 'piano', 'funk'] as const,
   DEFAULT: 'drums' as const,
   
   // Kit metadata
@@ -167,8 +167,8 @@ export const KITS = {
       color: '#8B5CF6', // Violet 500
       icon: '🎹',
     },
-    synth: {
-      name: 'Synth',
+    funk: {
+      name: 'Funk Kit',
       color: '#06B6D4', // Cyan 500
       icon: '🎛️',
     },
@@ -252,7 +252,7 @@ export const FEATURES = {
   KITS: {
     DRUMS: process.env.NEXT_PUBLIC_FEATURE_DRUM_KIT !== 'false',
     PIANO: process.env.NEXT_PUBLIC_FEATURE_PIANO_KIT !== 'false',
-    SYNTH: process.env.NEXT_PUBLIC_FEATURE_SYNTH_KIT !== 'false',
+    FUNK: process.env.NEXT_PUBLIC_FEATURE_FUNK_KIT !== 'false',
   },
 } as const
 
